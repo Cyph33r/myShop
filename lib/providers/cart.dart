@@ -103,6 +103,11 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
+  void clear() {
+    _items.clear();
+    notifyListeners();
+  }
+
   @override
   String toString() {
     var toReturn = '';

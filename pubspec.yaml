@@ -33,6 +33,7 @@ dependencies:
   data_classes: ^3.0.0+1
   preview: ^0.0.8
   badges: ^2.0.3
+  intl : ^0.17.0
 
 
   # The following adds the Cupertino Icons font to your application.
