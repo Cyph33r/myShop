@@ -71,6 +71,9 @@ class CartItem with ChangeNotifier {
 }
 
 class Cart with ChangeNotifier {
+  final List<CartItem> _items = [];
+  CartItem? _lastAddedItem;
+
   double get total {
     double currentTotal = 0;
     for (var item in _items) {
@@ -79,7 +82,6 @@ class Cart with ChangeNotifier {
     return currentTotal;
   }
 
-  final List<CartItem> _items = [];
 
   List<CartItem> get items {
     return [..._items];
@@ -95,11 +97,29 @@ class Cart with ChangeNotifier {
     } else {
       _items.add(item);
     }
+    _lastAddedItem = item;
     notifyListeners();
   }
 
   void removeItem(CartItem item) {
     _items.remove(item);
+    notifyListeners();
+  }
+
+  void removeLastItem() {
+    CartItem item;
+    try {
+      item = _items
+          .firstWhere((product) => product == _lastAddedItem);
+
+    } on StateError {
+      return;
+    }
+    if(item.quantity == 1) {
+      _items.remove(item);
+    } else {
+      item.decreaseQuantity();
+    }
     notifyListeners();
   }
 

@@ -58,7 +58,6 @@ class ProductsOverviewScreen extends StatelessWidget {
                       value: FilterOverFlowMenuItems.all,
                       child: Text('Show All'),
                     ),
-                    const PopupMenuItem(value: 3, child: Text('Orders'))
                   ])
         ],
       ),

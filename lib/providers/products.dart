@@ -43,6 +43,16 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
+  void addProduct(Product product) {
+    _items.add(product);
+    notifyListeners();
+  }
+
+  void removeProductById(int id) {
+    _items.removeWhere((product) => product.id == id);
+    notifyListeners();
+  }
+
   void showOnlyFavoriteProducts() {
     _showFavoritesOnly = true;
     notifyListeners();
