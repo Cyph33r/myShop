@@ -27,7 +27,7 @@ class AvailableProductItem extends StatelessWidget {
           children: [
             IconButton(
                 onPressed: () => Navigator.of(context)
-                    .pushNamed(EditProductScreen.routeName),
+                    .pushNamed(EditProductScreen.routeName,arguments: id),
                 icon: Icon(
                   Icons.edit,
                   color: Theme.of(context).colorScheme.primary,

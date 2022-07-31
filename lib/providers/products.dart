@@ -44,7 +44,15 @@ class Products with ChangeNotifier {
   }
 
   void addProduct(Product product) {
-    _items.add(product);
+    var indexOfProduct = _items
+        .indexWhere((existingProduct) => existingProduct.id == product.id);
+    if (indexOfProduct != -1) {
+      _items.removeAt(indexOfProduct);
+      _items.add(product);
+    } else {
+      _items.add(product);
+      notifyListeners();
+    }
     notifyListeners();
   }
 

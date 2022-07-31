@@ -33,7 +33,7 @@ class AvailableProductsScreen extends StatelessWidget {
                     id:items[index].id,
                       title: items[index].title,
                       imageUrl: items[index].imageUrl),
-                  Divider(),
+                  const Divider(),
                 ],
               )),
     );
