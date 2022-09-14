@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +14,7 @@ class ProductDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var arguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, Object>;
-    var id = arguments['id'] as int;
+    var id = arguments['id'] as String;
     var productData = Provider.of<Products>(context);
     var product = productData.findById(id);
 
@@ -27,9 +29,36 @@ class ProductDetailScreen extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              child: Image.network(
-                product.imageUrl,
-                fit: BoxFit.contain,
+              child: Stack(
+                children: [
+                  Positioned(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Stack(
+                        children: [
+                          ImageFiltered(
+                            imageFilter:
+                                ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+                            child: Image.network(
+                              product.imageUrl,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Center(
+                            child: Hero(
+                              tag: ValueKey(product.id),
+                              child: Image.network(
+                                product.imageUrl,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Text(product.title),

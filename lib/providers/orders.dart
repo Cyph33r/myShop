@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../data/database_collection.dart';
 import 'cart.dart';
 
 class Order {
-  final int id;
+  final String id;
   final List<CartItem> products;
   final DateTime time;
   final double subTotal;
@@ -38,19 +39,19 @@ class Order {
 
   @override
   String toString() {
-    return 'Order{ id: $id, orders: $products, time: $time, subTotal: $subTotal, isDelivered: $isDelivered,}';
+    return 'Order{ id: $id, products: $products, time: $time, subTotal: $subTotal, isDelivered: $isDelivered,}';
   }
 
   Order copyWith({
-    int? id,
-    List<CartItem>? orders,
+    String? id,
+    List<CartItem>? products,
     DateTime? time,
     double? subTotal,
     bool? isDelivered,
   }) {
     return Order(
       id: id ?? this.id,
-      products: orders ?? this.products,
+      products: products ?? this.products,
       time: time ?? this.time,
       subTotal: subTotal ?? this.subTotal,
       isDelivered: isDelivered ?? this.isDelivered,
@@ -60,7 +61,7 @@ class Order {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'orders': products,
+      'products': products.map((cartItem) => cartItem.product.id).toList(),
       'time': time,
       'subTotal': subTotal,
       'isDelivered': isDelivered,
@@ -69,15 +70,13 @@ class Order {
 
   factory Order.fromMap(Map<String, dynamic> map) {
     return Order(
-      id: map['id'] as int,
-      products: map['orders'] as List<CartItem>,
+      id: map['id'] as String,
+      products: map['products'] as List<CartItem>,
       time: map['time'] as DateTime,
       subTotal: map['subTotal'] as double,
       isDelivered: map['isDelivered'] as bool,
     );
   }
-
-//</editor-fold>
 }
 
 class Orders with ChangeNotifier {
@@ -87,12 +86,13 @@ class Orders with ChangeNotifier {
     return _orders.toList();
   }
 
-  void addOrder(Cart cart) {
-    var time = DateTime.now();
-    _orders.add(Order(
-        id: time.millisecondsSinceEpoch,
-        products: cart.items,
-        time: time,
-        subTotal: cart.total));
+  Future<void> addOrder(Cart cart) async {
+    final time = DateTime.now();
+    final order =
+        Order(id: '', products: cart.items, time: time, subTotal: cart.total);
+    final documentReference = await Databases.ordersCollection.add(order.toMap());
+    _orders.add(order.copyWith(id: documentReference.id));
+    await documentReference.update({'id': documentReference.id}).onError((error, stackTrace) => print(error));
+    notifyListeners();
   }
 }

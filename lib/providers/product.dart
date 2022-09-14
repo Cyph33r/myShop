@@ -1,36 +1,36 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+
 
 class Product with ChangeNotifier {
-  static var currentId = 1;
-  late int id;
-  final String title;
-  final String description;
-  final double price;
-  final String imageUrl;
-  bool isFavorite;
+  late final String id;
+  late final String title;
+  late final String description;
+  late final double price;
+  late final String imageUrl;
+  bool isFavorite = false;
 
-  void toggleFavorite() {
-    isFavorite = !isFavorite;
-    notifyListeners();
-  }
-
-//<editor-fold desc="Data Methods">
 
   Product({
-    int? id,
+    required this.id,
     required this.title,
     required this.description,
     required this.price,
     required this.imageUrl,
     this.isFavorite = false,
-  }) {
-    if (id != null) {
-      this.id = id;
-    } else {
-      this.id = currentId++;
-    }
-    print(currentId);
-  }
+  });
+
+  Product.fromDocumentSnapshot(
+      QueryDocumentSnapshot queryDocumentSnapshot, bool isFavorite)
+      : this(
+            id: queryDocumentSnapshot.get('id') as String,
+            title: queryDocumentSnapshot.get('title') as String,
+            description: queryDocumentSnapshot.get('description') as String,
+            price: queryDocumentSnapshot.get('price') as double,
+            imageUrl: queryDocumentSnapshot.get('imageUrl') as String,
+            isFavorite: isFavorite);
 
   @override
   bool operator ==(Object other) =>
@@ -58,7 +58,7 @@ class Product with ChangeNotifier {
   }
 
   Product copyWith({
-    int? id,
+    String? id,
     String? title,
     String? description,
     double? price,
@@ -86,9 +86,13 @@ class Product with ChangeNotifier {
     };
   }
 
+  String toJson() {
+    return json.encode(toMap());
+  }
+
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
-      id: map['id'] as int,
+      id: map['id'] as String,
       title: map['title'] as String,
       description: map['description'] as String,
       price: map['price'] as double,
@@ -96,6 +100,4 @@ class Product with ChangeNotifier {
       isFavorite: map['isFavorite'] as bool,
     );
   }
-
-//</editor-fold>
 }

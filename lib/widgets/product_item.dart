@@ -4,6 +4,7 @@ import 'package:shop_app/screens/product_detail_screen.dart';
 
 import '../providers/cart.dart';
 import '../providers/product.dart';
+import '../providers/products.dart';
 
 class ProductItem extends StatelessWidget {
   const ProductItem({Key? key}) : super(key: key);
@@ -11,8 +12,10 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Product product = Provider.of<Product>(context);
+    Products productsProvider = Provider.of<Products>(context, listen: false);
     Cart cart = Provider.of<Cart>(context, listen: false);
     return ClipRRect(
+      key: ValueKey(product.id),
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
           footer: ClipRRect(
@@ -29,12 +32,13 @@ class ProductItem extends StatelessWidget {
                         Icons.favorite,
                         color: Colors.red,
                       ),
-                      onPressed: () => product.toggleFavorite(),
+                      onPressed: () => productsProvider.toggleFavorite(product),
                     )
                   : IconButton(
                       icon: const Icon(Icons.favorite_outline),
                       color: Theme.of(context).colorScheme.secondary,
-                      onPressed: () => product.toggleFavorite()),
+                      onPressed: () => productsProvider.toggleFavorite(product),
+                    ),
               trailing: IconButton(
                 icon: const Icon(Icons.add_shopping_cart_outlined),
                 color: Theme.of(context).colorScheme.secondary,
@@ -60,9 +64,18 @@ class ProductItem extends StatelessWidget {
             onTap: () => Navigator.pushNamed(
                 context, ProductDetailScreen.routeName,
                 arguments: {'id': product.id}),
-            child: Image.network(
-              product.imageUrl,
-              fit: BoxFit.cover,
+            child: Hero(
+              tag: ValueKey(product.id),
+              child: Image.network(
+                product.imageUrl,
+                errorBuilder: (context, _, __) => const Center(
+                  child: Icon(Icons.emoji_emotions_outlined),
+                ),
+                loadingBuilder: (_, child, progress) => progress == null
+                    ? child
+                    : const Center(child: CircularProgressIndicator()),
+                fit: BoxFit.cover,
+              ),
             ),
           )),
     );

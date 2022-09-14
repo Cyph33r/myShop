@@ -6,10 +6,17 @@ import 'package:shop_app/widgets/cart_item.dart';
 
 import '../providers/cart.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   static var routeName = '/cart_screen';
 
   const CartScreen({Key? key}) : super(key: key);
+
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  var isAddingOrder = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,13 +52,22 @@ class CartScreen extends StatelessWidget {
                               badgeColor: Theme.of(context).colorScheme.primary,
                             ),
                             TextButton(
-                                onPressed: () {
-                                  orders.addOrder(cart);
+                                onPressed: () async {
+                                  setState(() => isAddingOrder = true);
+                                  await orders.addOrder(cart);
                                   cart.clear();
+                                  setState(() => isAddingOrder = false);
                                 },
-                                child: const Text(
-                                  'ORDER NOW',
-                                ))
+                                child: isAddingOrder
+                                    ? const SizedBox(
+                                        width: 28,
+                                        height: 28,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 3.0,
+                                        ))
+                                    : const Text(
+                                        'ORDER NOW',
+                                      ))
                           ],
                         ),
                       ),

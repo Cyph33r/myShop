@@ -5,7 +5,7 @@ import 'package:shop_app/screens/edit_product_screen.dart';
 import '../providers/products.dart';
 
 class AvailableProductItem extends StatelessWidget {
-  final int id;
+  final String id;
   final String title;
   final String imageUrl;
 
@@ -51,6 +51,7 @@ class AvailableProductItem extends StatelessWidget {
                                   )),
                               TextButton(
                                   onPressed: () {
+
                                     Navigator.pop(context, true);
                                   },
                                   child: const Text(
